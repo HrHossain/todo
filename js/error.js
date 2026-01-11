@@ -10,22 +10,3 @@ export class LoginErr extends Error{
     }
 }
 
-// function login(password) {
-//   if (password !== "secret") {
-//     throw new LoginErr("Invalid credentials", {
-//       code: "INVALID_PASSWORD",
-//       status: 403
-//     });
-//   }
-// }
-
-// try {
-//   login("1234");
-// } catch (err) {
-//   if (err instanceof LoginErr) {
-//     console.log(err.name);     
-//     console.log(err.message);  
-//     console.log(err.code);    
-//     console.log(err.status);  
-//   }
-// }

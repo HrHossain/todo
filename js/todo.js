@@ -16,3 +16,13 @@ class Todo{
         return this.createAt.toLocaleString('en-US',options)
     }
 }
+
+class TodoApp{
+    constructor(){
+        this.todos = [];
+        this.editId = null;
+        this.input = document.getElementById("todoInput");
+        this.list = document.getElementById("todoList");
+        this.addBtn = document.getElementById("addBtn")
+    }
+}
