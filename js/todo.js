@@ -47,7 +47,7 @@ class TodoApp{
     async getAllTodos(){
         this.showLoading()
         try{
-            const res = await fetch('https://dummyjson.com/todos?limit=10&skip=10')
+            const res = await fetch('https://dummyjson.com/todos?limit=6&skip=6')
             if(!res.ok){
                 TodoErr.customError("connection problem!")
             }
