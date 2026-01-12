@@ -35,7 +35,7 @@ class TodoApp{
                  this.input.value = ''
         })
        if(this.todos.length === 0){
-        console.log("my load")
+        
          this.getAllTodos()
        }
        this.bindEvents()
@@ -251,4 +251,3 @@ class TodoApp{
 
 const time = new Todo()
 
-console.log(todo)
