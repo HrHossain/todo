@@ -20,9 +20,9 @@ class Login {
         this.btn.disabled = true;
     }
     hideSpinner() {
-  this.spinner.classList.add("hidden");
-  this.btnText.textContent = "Login";
-  this.btn.disabled = false;
+        this.spinner.classList.add("hidden");
+        this.btnText.textContent = "Login";
+        this.btn.disabled = false;
 }
     async handleLogin() {
         this.showSpinner();

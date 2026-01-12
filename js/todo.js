@@ -47,7 +47,7 @@ class TodoApp{
     async getAllTodos(){
         this.showLoading()
         try{
-            const res = await fetch('https://dummyjson.com/todos?limit=3&skip=10')
+            const res = await fetch('https://dummyjson.com/todos?limit=10&skip=10')
             if(!res.ok){
                 TodoErr.customError("connection problem!")
             }
@@ -57,7 +57,7 @@ class TodoApp{
                 this.render()
              }
         }catch(err){
-            console.log(err.message)
+            alert(err.message)
         }
 
     }
@@ -170,10 +170,10 @@ class TodoApp{
             }
 
            }else{
-            console.log("need valid input!")
+            alert("need valid input!")
            }
         }catch(err){
-            console.log(err)
+            alert(err)
         }finally{
             this.editId = null
         }
@@ -207,7 +207,7 @@ class TodoApp{
             
 
         }catch(err){
-            console.log(err.message)
+            alert(err.message)
         }
     }
 
@@ -247,7 +247,7 @@ class TodoApp{
             }catch(err){
                 this.todos = this.todos.filter(todo=> todo.id !== id)  
                 this.render()
-                console.log(err.message)
+                alert(err.message)
             }
     }
 
