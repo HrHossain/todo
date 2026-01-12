@@ -27,7 +27,12 @@ class TodoApp{
         this.list = document.getElementById("todoList");
         this.addBtn = document.getElementById("addBtn")
         this.addBtn.addEventListener("click",async (e)=>{
-                 this.addTodo()
+                 if(this.editId){
+                    await this.updateTodo()
+                 }else{
+                    await this.addTodo()
+                 }
+                 this.input.value = ''
         })
        if(this.todos.length === 0){
         console.log("my load")
@@ -65,9 +70,9 @@ class TodoApp{
     li.innerHTML = `
       <div class="flex flex-col gap-1">
         <div class="flex items-center gap-2">
-          <input type="checkbox"
+          <input class="toggle-input" type="checkbox"
             ${todo.completed ? "checked" : ""}
-            onchange="app.toggleCompleted(${todo.id})"
+            data-toggle-id ="${todo.id}"
           />
           <span class="${todo.completed ? 'line-through text-gray-400' : ''}">
             ${todo.todo}
@@ -129,16 +134,73 @@ class TodoApp{
                     const newTodo = await res.json()
                     this.todos.unshift(newTodo)
                     alert("todo added successfully")
-                    this.input.value = ''
+                    
                     this.render()
            }catch(err){
             alert(err.message)
            }
         }
     }
+
+
     async updateTodo(){
-        
+        try{
+           if(this.input.value.trim().length){
+             const res = await fetch(`https://dummyjson.com/todos/${Number(this.editId)}`, {
+            method: 'PUT', /* or PATCH */
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                todo: this.input.value,
+            })
+            })
+
+            if(!res.ok){
+                TodoErr.customError("Update unsuccessfully!")
+            }
+            const updateduser = await res.json()
+            if(updateduser){
+                this.todos = this.todos.map(todo => todo.id == updateduser.id ? updateduser : todo)
+                this.render()
+            }
+
+           }else{
+            console.log("need valid input!")
+           }
+        }catch(err){
+            console.log(err)
+        }
     }
+
+    async toggleCompleted(id){
+        let todo
+        if(id){
+             todo = this.todos.find(todo => todo.id == id)
+        }
+        console.log(todo)
+        try{
+            const res =  await fetch(`https://dummyjson.com/todos/${Number(id)}`, {
+            method: 'PUT', /* or PATCH */
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                completed: false,
+            })
+            })
+
+            if(!res.ok){
+                TodoErr.customError("Toggle unsuccessfully!")
+            }
+            const updateduser = await res.json()
+
+            this.todos = this.todos.map(todo=>
+            todo.id == id ? {...todo,completed:!todo.completed} : todo
+        )
+        this.render()
+
+        }catch(err){
+            console.log(err.message)
+        }
+    }
+
     bindEvents(){
         this.list.addEventListener("click", async (e)=>{
             
@@ -146,15 +208,21 @@ class TodoApp{
                 const id = Number(e.target.dataset.id)
                 console.log(id)
                 await this.deleteTodo(id)
-            }else if(e.target.classList.contains("edit-btn")){
+            }
+            else if(e.target.classList.contains("edit-btn")){
                 const id = e.target.dataset.id
                 const user = this.todos.find(todo=> todo.id == id)
                 if(user){
+                    this.editId = id
                     this.input.value = user.todo
                 }
             }
+            else if(e.target.classList.contains("toggle-input")){
+                this.toggleCompleted(e.target.dataset.toggleId)
+            }
         })
     }
+
     async deleteTodo(id){
             const res = await fetch(`https://dummyjson.com/todos/${id}`, {method: 'DELETE',})
                 const deletedTodo = await res.json()
