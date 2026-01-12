@@ -50,7 +50,7 @@ class Login {
                 const user = await res.json()
                 if(user){
                     setItemLocalStorage("login-user",user)
-                    window.location.href = "http://127.0.0.1:5500/index.html"
+                    window.location.href = "/index.html"
                 }
             }
             
