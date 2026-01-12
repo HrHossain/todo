@@ -8,7 +8,7 @@ class Todo{
         this.createAt = new Date()
     }
     getFormattedDate(){
-        const options={
+        const options = {
             year:'numeric',
             month:'short',
             day:'numeric',
@@ -26,21 +26,28 @@ class TodoApp{
         this.input = document.getElementById("todoInput");
         this.list = document.getElementById("todoList");
         this.addBtn = document.getElementById("addBtn")
-        this.getAllTodos()
+        this.addBtn.addEventListener("click",async (e)=>{
+                 this.addTodo()
+        })
+       if(this.todos.length === 0){
+        console.log("my load")
+         this.getAllTodos()
+       }
+       this.bindEvents()
+      
        
     }
 
     async getAllTodos(){
         this.showLoading()
         try{
-            const res = await fetch('https://dummyjson.com/todos?limit=6&skip=10')
+            const res = await fetch('https://dummyjson.com/todos?limit=3&skip=10')
             if(!res.ok){
                 TodoErr.customError("connection problem!")
             }
             const todos = await res.json()
             this.todos = todos.todos
              if(this.todos.length > 0){
-                console.log("ok")
                 this.render()
              }
         }catch(err){
@@ -70,13 +77,14 @@ class TodoApp{
       </div>
       <div class="flex gap-2">
         <button
-          class="px-3 py-1 text-sm bg-yellow-400 rounded-lg hover:bg-yellow-500"
-          onclick="app.startEdit(${todo.id})">
+          class=" edit-btn px-3 py-1 text-sm bg-yellow-400 rounded-lg hover:bg-yellow-500"
+          data-id="${todo.id}">
           Edit
         </button>
         <button
-          class="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
-          onclick="app.deleteTodo(${todo.id})">
+          class=" delete-btn px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
+          data-id="${todo.id}"
+          >
           Delete
         </button>
       </div>
@@ -118,11 +126,42 @@ class TodoApp{
                     if(!res.ok){
                         TodoErr.customError("not added todo!")
                     }
+                    const newTodo = await res.json()
+                    this.todos.unshift(newTodo)
                     alert("todo added successfully")
+                    this.input.value = ''
+                    this.render()
            }catch(err){
             alert(err.message)
            }
         }
+    }
+    async updateTodo(){
+        
+    }
+    bindEvents(){
+        this.list.addEventListener("click", async (e)=>{
+            
+            if(e.target.classList.contains("delete-btn")){
+                const id = Number(e.target.dataset.id)
+                console.log(id)
+                await this.deleteTodo(id)
+            }else if(e.target.classList.contains("edit-btn")){
+                const id = e.target.dataset.id
+                const user = this.todos.find(todo=> todo.id == id)
+                if(user){
+                    this.input.value = user.todo
+                }
+            }
+        })
+    }
+    async deleteTodo(id){
+            const res = await fetch(`https://dummyjson.com/todos/${id}`, {method: 'DELETE',})
+                const deletedTodo = await res.json()
+            if(deletedTodo.isDeleted){
+                this.todos = this.todos.filter(todo=> todo.id !== id)  
+                this.render()
+            }
     }
 
 }
