@@ -63,6 +63,7 @@ class TodoApp{
     }
 
    render() {
+    
   this.list.innerHTML = "";
   this.todos.forEach(todo => {
     const li = document.createElement("li");
@@ -115,6 +116,7 @@ class TodoApp{
   `;
     }
     async addTodo(){
+        this.editId = null
         const todoValue = this.input.value
         if(todoValue.trim().length === 0){
             alert("user input not valid")
@@ -156,8 +158,9 @@ class TodoApp{
                 todo: this.input.value,
             })
             })
-
+            
             if(!res.ok){
+                
                 TodoErr.customError("Update unsuccessfully!")
             }
             const updateduser = await res.json()
@@ -171,6 +174,8 @@ class TodoApp{
            }
         }catch(err){
             console.log(err)
+        }finally{
+            this.editId = null
         }
     }
 
@@ -250,7 +255,7 @@ class TodoApp{
 
   const todo = new TodoApp()
     const time = new Todo()
-
+console.log(todo)
 if(!getItemLocalStorage("login-user")){
    window.location.href = "/login.html"
 }
