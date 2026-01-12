@@ -1,4 +1,5 @@
 import { TodoErr } from "./error.js";
+import { getItemLocalStorage } from "./utils.js";
 
 class Todo{
     constructor(id,text){
@@ -210,7 +211,7 @@ class TodoApp{
             
             if(e.target.classList.contains("delete-btn")){
                 const id = Number(e.target.dataset.id)
-                console.log(id)
+          
                 await this.deleteTodo(id)
             }
             else if(e.target.classList.contains("edit-btn")){
@@ -247,7 +248,10 @@ class TodoApp{
 
 }
 
- const todo = new TodoApp()
+  const todo = new TodoApp()
+    const time = new Todo()
 
-const time = new Todo()
+if(!getItemLocalStorage("login-user")){
+   window.location.href = "/login.html"
+}
 
