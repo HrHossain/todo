@@ -77,6 +77,7 @@ class TodoApp{
           <span class="${todo.completed ? 'line-through text-gray-400' : ''}">
             ${todo.todo}
           </span>
+          <small class="text-gray-400 text-xs">Created: ${time.getFormattedDate()}</small>
         </div>
        
       </div>
@@ -118,6 +119,7 @@ class TodoApp{
             alert("user input not valid")
         }else{
            try{
+            
              const res = await fetch('https://dummyjson.com/todos/add', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -133,8 +135,6 @@ class TodoApp{
                     }
                     const newTodo = await res.json()
                     this.todos.unshift(newTodo)
-                    alert("todo added successfully")
-                    
                     this.render()
            }catch(err){
             alert(err.message)
@@ -144,8 +144,10 @@ class TodoApp{
 
 
     async updateTodo(){
+        
         try{
            if(this.input.value.trim().length){
+            
              const res = await fetch(`https://dummyjson.com/todos/${Number(this.editId)}`, {
             method: 'PUT', /* or PATCH */
             headers: { 'Content-Type': 'application/json' },
@@ -172,29 +174,31 @@ class TodoApp{
     }
 
     async toggleCompleted(id){
+        
         let todo
         if(id){
              todo = this.todos.find(todo => todo.id == id)
+             this.todos = this.todos.map(todo=>
+            todo.id == id ? {...todo,completed:!todo.completed} : todo)
+            this.render()
         }
-        console.log(todo)
+        
         try{
+            
             const res =  await fetch(`https://dummyjson.com/todos/${Number(id)}`, {
             method: 'PUT', /* or PATCH */
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                completed: false,
+                completed: !todo.completed,
             })
             })
 
             if(!res.ok){
                 TodoErr.customError("Toggle unsuccessfully!")
             }
-            const updateduser = await res.json()
+            // const updateduser = await res.json()
 
-            this.todos = this.todos.map(todo=>
-            todo.id == id ? {...todo,completed:!todo.completed} : todo
-        )
-        this.render()
+            
 
         }catch(err){
             console.log(err.message)
@@ -224,16 +228,27 @@ class TodoApp{
     }
 
     async deleteTodo(id){
-            const res = await fetch(`https://dummyjson.com/todos/${id}`, {method: 'DELETE',})
+            try{
+                const res = await fetch(`https://dummyjson.com/todos/${Number(id)}`, {method: 'DELETE',})
+                if(!res.ok){
+                    TodoErr.customError("network error!")
+                }
                 const deletedTodo = await res.json()
             if(deletedTodo.isDeleted){
                 this.todos = this.todos.filter(todo=> todo.id !== id)  
                 this.render()
             }
+            }catch(err){
+                this.todos = this.todos.filter(todo=> todo.id !== id)  
+                this.render()
+                console.log(err.message)
+            }
     }
 
 }
 
-const app = new TodoApp()
+ const todo = new TodoApp()
 
-console.log(app)
+const time = new Todo()
+
+console.log(todo)
