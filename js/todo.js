@@ -27,13 +27,19 @@ class TodoApp{
         this.input = document.getElementById("todoInput");
         this.list = document.getElementById("todoList");
         this.addBtn = document.getElementById("addBtn")
+        
         this.addBtn.addEventListener("click",async (e)=>{
+            
+
                  if(this.editId){
+                    
                     await this.updateTodo()
                  }else{
+                    
                     await this.addTodo()
                  }
                  this.input.value = ''
+                 this.addBtn.innerText = "Add"
         })
        if(this.todos.length === 0){
         
@@ -85,6 +91,7 @@ class TodoApp{
       </div>
       <div class="flex gap-2">
         <button
+
           class=" edit-btn px-3 py-1 text-sm bg-yellow-400 rounded-lg hover:bg-yellow-500"
           data-id="${todo.id}">
           Edit
@@ -220,9 +227,11 @@ class TodoApp{
                 await this.deleteTodo(id)
             }
             else if(e.target.classList.contains("edit-btn")){
+                
                 const id = e.target.dataset.id
                 const user = this.todos.find(todo=> todo.id == id)
                 if(user){
+                    this.addBtn.innerText = "Edit"
                     this.editId = id
                     this.input.value = user.todo
                 }
